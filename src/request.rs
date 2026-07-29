@@ -19,6 +19,10 @@ pub struct RawResponse {
 
 /// Sends the HTTP request described by `args` and returns the response.
 pub async fn send(args: &Cli) -> Result<RawResponse> {
+    if !args.url.starts_with("http://") && !args.url.starts_with("https://") {
+        anyhow::bail!("invalid URL '{}': must start with http:// or https://", args.url);
+    }
+
     if let Some(body) = &args.body {
         serde_json::from_str::<serde_json::Value>(body)
             .with_context(|| format!("invalid JSON body: {body}"))?;
